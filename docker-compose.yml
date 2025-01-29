@@ -1,0 +1,64 @@
+services:
+  # Borrowing Microservice
+  borrowing:
+    build:
+      context: ./Borrowing-Microservice-master/Borrowing-Microservice-master  # Path to the borrowing service directory
+    ports:
+      - "3003:3003"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/borrowing_service
+    depends_on:
+      - mongo
+
+  # Book Microservice
+  book:
+    build:
+      context: ./Book-Microservice-master/Book-Microservice-master # Path to the borrowing service directory
+    ports:
+      - "3002:3002"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/review_service
+    depends_on:
+      - mongo
+
+  # User Microservice
+  user:
+    build:
+      context: ./User-Microservice-master/User-Microservice-master
+    ports:
+      - "3001:3001"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/user-service
+    depends_on:
+      - mongo
+
+  # Review Microservice
+  review:
+    build:
+      context: ./Review-Microservice-master/Review-Microservice-master
+    ports:
+      - "3004:3004"
+    environment:
+      - MONGODB_URI=mongodb://mongo:27017/review_service
+    depends_on:
+      - mongo
+
+  # MongoDB Service
+  mongo:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  frontend:
+    build:
+      context: ./Library-Management-App-master/Library-Management-App-master
+      dockerfile: Dockerfile
+    ports:
+      - "4200:80"
+
+# Docker volume for MongoDB data persistence
+volumes:
+  mongo-data:
